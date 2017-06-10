@@ -61,7 +61,10 @@ def detectPiano(originalImage, display=False):
 
         numOctaves = 0
         for octave in octaves:
-
+            
+            minVal = 100
+            bestTransform = np.array([])
+            
             for flip in range(0, 2):
                 for shift in range(0,5):
                     transform = computeTransform(octave, flip, shift)
@@ -73,13 +76,16 @@ def detectPiano(originalImage, display=False):
                         displayWarpTest(warpedim)
                         print(norm)
                         
-                    if norm < 50:
-
-                        numOctaves += 1
+                    if norm < 50 and norm < minVal:
+                        
+                        minVal = norm
+                        bestTransform = transform
                         if display:
                             displayOctavesOnWarped(warpedim)
-
-                        displayOctavesOnOriginal(originalImage, transform)   
+            
+            if minVal < 50:
+                displayOctavesOnOriginal(originalImage, bestTransform)   
+                numOctaves += 1   
 
 
         print("Number of octaves detected: " + str(numOctaves))
